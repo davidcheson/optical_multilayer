@@ -1,4 +1,4 @@
-# Optical Multilayer Exploration Software.
+# Optical Multilayer Simulation and Design Optimization Module
 
 Created by David C. Heson, Jack Liu, and Dr. William M. Robertson over the 2022 MTSU Computational Sciences REU (NSF REU Award #1757493).
 

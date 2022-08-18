@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Authors: David C. Heson, Dr. Bill Robertson, June 2022.
+# Authors: David C. Heson, Jack Liu, Dr. Bill Robertson, June 2022.
 
 # Program to simulate reflection/transmission coefficients across custom multilayers.
 

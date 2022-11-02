@@ -4,14 +4,16 @@
 
 # Program to simulate reflection/transmission coefficients across custom multilayers.
 
-## test
-
 import numpy as np
 import matplotlib.pyplot as plt
 import math
 import time
 import sys
-import copy 
+import copy
+import os 
+import csv
+
+### Optical Multilayer Functions:
 
 def multilayer(n_list, dist, mode = 'rp', step = 1000, option_aw = 'a', e_opt = 'n',
                a1 = 0, a2 = np.pi/2, w_t = 650e-9, w1 = 400e-9, w2 = 750e-9,
@@ -234,7 +236,7 @@ def multilayer(n_list, dist, mode = 'rp', step = 1000, option_aw = 'a', e_opt = 
             
         stepz = (dtotal + limit)/step
         
-        j = 0
+        j = 1
         
         etotals = np.zeros(shape = (step, 2))
         etotalss = np.zeros(shape = (step, 2))
@@ -404,7 +406,6 @@ def bloch_wave(n_list, d, mode = 'rp', step = 1000, option_aw = 'a', a1 = 0,
     else:
         return surface_pos, valid, minimum
 
-
 ##########################################################################################
 
 def swt_calc(n_list, d_list, pol, steps, change = 'a', a_i = 0, a_f = np.pi/2, 
@@ -543,7 +544,7 @@ def graph(coord_list, label_list, size = (12, 6), efield = 0, d_set = None):
             for p in d_curr:
                 a = p + a
                 plt.axvline(x = a, color = "black", linestyle = '--')
-        plt.plot(curr_list[:,0], curr_list[:, 1], label = str(label_list[i]))
+        plt.plot(curr_list[:,0], curr_list[:,1], label = str(label_list[i]))
             
     plt.legend()
     plt.grid()
@@ -719,10 +720,75 @@ def round_up(n, decimals=0):
 
 ##########################################################################################
 
+### Boilerplates: 
+
+def export(var_type , target_var, target_file, csv = False):
+	
+	if os.path.exists(target_file) == True:
+		print("The file + \"" + target_file + "\" already exists.")
+		break
+	elif csv = True:
+		d = varDict[target_var][:,0]
+		a = varDict[taret_var][:,1]
+		x = input("What is the independent variable in this simulation? (i.e. \"Wavelength\")\n\n")
+		y = input("What is the dependent variable in this simulation? (i.e. \"Reflectivity\"\n\n")
+		fields = [x, y]
+		to_save = []
+		for i in range(0, len(d)):
+			to_save.append([d[i], a[i])
+		fp = open(target_file, 'w')
+		write = csv.writer(fp)
+		write.writerow(fields)
+		write.writerow(to_save)
+		fp.close()
+	elif var_type == 'static':
+		to_save = varDict[target_var]
+		fp = open(target_file, 'w')
+		fp.write(to_save)
+		fp.close()
+	elif var_type == 'dynamic':
+		to_save = dynamic_formulas[target_var]
+		fp = open(target_file, 'w')
+		fp.write(to_save)
+		fp.close()
+	else:
+		print("Invalid input.")
+
+###########################################################################################
+
+def import_b(var_type = NaN, save_name, target_file, csv = False):
+	
+	if os.path.exists(target_file) == False:
+		print("The file +\"" + target_file + "\" does not exist.")
+		break
+	elif csv = True:
+		fp = open(target_file, 'r')
+		csvFile = csv.DictReader(fp)
+		to_savex = []
+		to_savey = []
+		for line in csvFile:
+			to_savex.append(line[0])
+			to_savey.append(line[1])
+		del to_savex[0]
+		del to_savey[0]
+		to_save = np.array(to_savex, to_savey)
+		varDict{save_name} = to_save
+		fp.close()
+	elif var_type == 'static':
+		fp = open(target_file, 'r')
+		varDict[save_name] = fp.read()
+		fp.close()
+	elif var_type == 'dynamic':
+		fp = open(target_file, 'r')
+		varDict[save_name] = fp.read()
+		fp.close()
+
 ###########################################################################################
 
 def crit_ang(n_list):
     return np.arcsin(n_list[-1] / n_list) - 0.05
+
+###########################################################################################
 
 def is_float(element):
     try:
@@ -730,6 +796,10 @@ def is_float(element):
         return True
     except ValueError:
         return False
+
+###########################################################################################
+
+### Help text:
 
 start = '''
 Hello, this is a script that runs through the various functionalities of the Optical
@@ -770,6 +840,10 @@ the \"graph\" command, input \"graph\", and then input \"help\"). To exit out of
 
 Basic Functionalities:
 
+- export
+- export data
+- import
+- import data
 - print
 - input
 - delete
@@ -936,6 +1010,27 @@ as \"insertedname_#\". For example, if the run name is \"test\" and 5 multilayer
 RIU\SWT measures below the values indicated in the hyperparameters under \"sens threshold\". 
 '''
 
+export_help = '''
+Simple tool to export data or a variable created through the script for future use. It will create a .txt document that simply has the respective information.
+For exporting data as a .csv, use the \"export data\" command specifically. 
+'''
+
+import_help = '''
+Simple tool to import data or a variable. Works well with variables created within the script, and a variable could also be potentially defined outside of the
+script and then imported this way.
+For importing data from a .csv, use the \"import data\" command specfiically. 
+'''
+
+export_data_help = '''
+Subroutine of the export tool to export data specifically as .csv. The names input will be used as column headers.
+'''
+
+import_data_help = '''
+Subroutine of the import tool to import .csv data. Will follow the data format from the export_data subroutine, meaning
+that it will specifically look at all the rows below the column headers, taking the first column as the independent variable
+and the second column as the dependent variable. 
+'''
+
 input_alert = '''
 It is STRONGLY suggested to see the documentation for this command before
 using it! Type \"ok\" when asked for a variable name to disable this alert for this session.
@@ -968,6 +1063,8 @@ reset_int = '''
 Do you wish to reset all the hyperparameters (\"hyper\"), all the variables (\"var\") or everything (\"all\").
 Type \"exit\" to not reset anything.
 '''
+
+### Variable set-up:
 
 def initializing_hyperparameters():
     global resolution 
@@ -1017,6 +1114,9 @@ initializing_hyperparameters()
 initializing_variables()
 alert = 'yes'
 print(start)
+
+### Main code loop:
+
 while True:
 
     command = input(loop_start)
@@ -1026,14 +1126,153 @@ while True:
     if command == 'exit':
         print("Have a good day!  ʕ •ᴥ• ʔ")
         break
-        
+
     ##########################
     
     elif command == 'help':
         print(help_text)
         print(back_main)
-        
+ 
     ##########################
+    
+    elif command == 'export':
+		try:
+			while True:
+				varName = input("Please specify the name of the variable/data which you wish to export.\n\n")
+				if varName == 'exit':
+					print(back_main)
+					break
+				elif varName == 'help':
+					print(export_help)
+					continue
+				varType = input("Is the variable to be saved a generated dynamic formula? (yes/no)\n\n")
+				if varType == 'exit':
+					print(back_main)
+					break
+				elif varName == 'help':
+					print(export_help)
+					continue
+				if varType == 'yes':
+					varType == 'dynamic'
+					if varName in dynamic_formulas == False:
+						print("Variable " + varName + " not found in the dynamic variable dictionary.")
+						print(back_main)
+						break
+				elif varType == 'no':
+					varType == 'static'
+					if varName in varDict == False:
+						print("Variable " + varName + " not found in the variable dictionary.")
+						print(back_main)
+						break
+				print("Please specify the name of the file where you want to save this.")
+				file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name of the variable.\n\n")
+				if file_save == " ":
+					export(var_type = varType, target_var = varName, target_file = varName)
+				else:
+					export(var_type = varType, target_var = varName, target_file = file_save)
+				print("\"" + varName + "\" succesfully exported!")
+				print(back_sub)	
+		else:
+			print(exception_gen)
+
+    ##########################  
+
+	elif command == 'export data':
+		try:
+			while True:
+				varName = input("Please input the name of the variable under which the data you wish to save is stored.\n\n")
+				if varName == 'exit':
+					print(back_main)
+					break
+				elif varName == 'help':
+					print(export_data_help)
+					continue
+				elif varName not in varDict:
+					print(str(to_graph), " not found in stored in variables.")
+					continue
+				print("Please specify the name of the file where you want to save this.")
+				file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name the data is saved under.\n\n")
+				if file_save == " ":
+					export(var_type = varType, target_var = varName, target_file = varName)
+				else:
+					export(var_type = varType, target_var = varName, target_file = file_save)
+				print("\"" + varName + "\" succesfully exported!")
+				print(back_sub)	
+		except:
+			print(exception_gen)
+
+    ##########################
+
+	elif command == 'import data':
+	try:
+		while True:
+			print(1)
+	except:
+		print(exception_gen)
+    
+    ##########################
+    
+    elif command == 'import':
+		try:
+			while True:
+				varName = input("Please specify the name you want to import the variable/data as.\n\n")
+				if varName == 'exit':
+					print(back_main)
+					break
+				elif varName == 'help':
+					print(import_help)
+					continue
+				varType = input("Is the variable/data you are importing a dynamic formula? (yes/no)\n\n")
+				if varType == 'exit':
+					print(back_main)
+					break
+				elif varType == 'help':
+					print(import_help)
+					continue
+				elif varType == 'yes':
+					varType = 'dynamic'
+				elif varType == 'no':
+					varType = 'static'
+				print("Please specify the name of the file from where the data is being imported.")
+				varFile = input("Alternatively, input \" \" if it is saved with the name you indicated and it is in the same folder as this script.\n\n")
+				if varFile = " ":
+					import_b(varType, varName, varName)
+				else:
+					import_b(varType, varName, varFile)
+				print("\"" + varName + "\" succesfully imported!")
+				print(back_sub)
+		except:
+			print(exception_gen)
+
+    ##########################
+    
+    elif command == 'export data':
+		try:
+			while True:
+				varName = input("Please input the name under which the data you wish to export is saved.\n\n")
+				if varName == "exit":
+					print(back_main)
+					break
+				elif varName == "help":
+					print(export_data_help)
+					continue
+				elif varName not in varDict:
+					print("Data \"" + varName + \" not found in stored variables.")
+					continue
+				print()
+				
+		except:
+			print(exception_gen)
+
+	##########################
+    
+    elif command == 'import data':
+		try:
+			while True:
+		except:
+			print(exception_gen)
+	
+	##########################
     
     elif command == 'print':
         try:
@@ -1229,7 +1468,7 @@ while True:
                 print('Variable ', str(command), 'sucesfully deleted.')
         except:
             print(exception_gen)
-                
+
     ##########################
     
     elif command == 'hyperparameters':
@@ -1767,7 +2006,7 @@ while True:
                 print("Returning to input for electrical field simulation. Type \"exit\" to return to main.")
         except:
             print(exception_gen)
-        
+
     ##########################
     
     elif command == 'bloch detector':
@@ -1912,7 +2151,7 @@ while True:
                 print("Returning to input for mutilayer simulation. Type \"exit\" to return to main.")
         except:
             print(exception_gen)
-            
+
     ##########################
     
     elif command == 'dynamic formulas':
@@ -1941,7 +2180,7 @@ while True:
                     print("Index function ", name, " succesfully created and stored.")
         except:
             print(exception_gen)
-            
+
     ##########################
     
     elif command == 'dynamic index':
@@ -2116,7 +2355,7 @@ while True:
                 print("Returning to input for \"graph\" subroutine, input \"exit\" to quit it.")
         except:
             print(except_gen)
-        
+
     ##########################
     
     elif command == 'explore':
@@ -2226,7 +2465,7 @@ while True:
                 break
         except:
             print(exception_gen)
-                                            
+
     ##########################
     
     elif command == 'execute dev testing':
@@ -2243,7 +2482,7 @@ while True:
                 exec(command, globals())
         except:
             print(exception_gen)
-            
+
     ##########################
     
     else:

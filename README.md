@@ -10,6 +10,7 @@ The current functionalities of the program are:
 <li>Graph reflection and transmission coefficients across multilayers with changing angle or wavelength, for specific polarisation mode.</li>
 <li>Graph the electric field profile accross a multilayer for a specific angle, wavelength, polarisation, and multilayer.</li>
 <li>Calculate RIU and SWT values for specified multilayer arrangements.</li>
+<li>Option to import/export variables defined in the script and the data generated.</li>
 <li>Explore by force bruting a set of parameters for the multilayers, finding the best setups in terms of RIU/SWT and reflectivity dips.</li>
 <li>Simulate the properties of a multilayer using a dynamic index of refraction, which is wavelength dependent and corresponds to a user-defined function.</li>
 <li>More to come!</li>

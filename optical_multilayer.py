@@ -722,66 +722,64 @@ def round_up(n, decimals=0):
 
 ### Boilerplates: 
 
-def export(var_type , target_var, target_file, csv = False):
-	
-	if os.path.exists(target_file) == True:
-		print("The file + \"" + target_file + "\" already exists.")
-		break
-	elif csv = True:
-		d = varDict[target_var][:,0]
-		a = varDict[taret_var][:,1]
-		x = input("What is the independent variable in this simulation? (i.e. \"Wavelength\")\n\n")
-		y = input("What is the dependent variable in this simulation? (i.e. \"Reflectivity\"\n\n")
-		fields = [x, y]
-		to_save = []
-		for i in range(0, len(d)):
-			to_save.append([d[i], a[i])
-		fp = open(target_file, 'w')
-		write = csv.writer(fp)
-		write.writerow(fields)
-		write.writerow(to_save)
-		fp.close()
-	elif var_type == 'static':
-		to_save = varDict[target_var]
-		fp = open(target_file, 'w')
-		fp.write(to_save)
-		fp.close()
-	elif var_type == 'dynamic':
-		to_save = dynamic_formulas[target_var]
-		fp = open(target_file, 'w')
-		fp.write(to_save)
-		fp.close()
-	else:
-		print("Invalid input.")
+def export(var_type, target_var, target_file, csv = False):
+    
+    if os.path.exists(target_file) == True:
+        print("The file + \"" + target_file + "\" already exists.")
+    elif csv == True:
+        d = varDict[target_var][:,0]
+        a = varDict[taret_var][:,1]
+        x = input("What is the independent variable in this simulation? (i.e. \"Wavelength\")\n\n")
+        y = input("What is the dependent variable in this simulation? (i.e. \"Reflectivity\"\n\n")
+        fields = [x, y]
+        to_save = []
+        for i in range(0, len(d)):
+            to_save.append([d[i], a[i]])
+        fp = open(target_file, 'w')
+        write = csv.writer(fp)
+        write.writerow(fields)
+        write.writerow(to_save)
+        fp.close()
+    elif var_type == 'static':
+        to_save = varDict[target_var]
+        fp = open(target_file, 'w')
+        fp.write(to_save)
+        fp.close()
+    elif var_type == 'dynamic':
+        to_save = dynamic_formulas[target_var]
+        fp = open(target_file, 'w')
+        fp.write(to_save)
+        fp.close()
+    else:
+        print("Invalid input.")
 
 ###########################################################################################
 
-def import_b(var_type = NaN, save_name, target_file, csv = False):
-	
-	if os.path.exists(target_file) == False:
-		print("The file +\"" + target_file + "\" does not exist.")
-		break
-	elif csv = True:
-		fp = open(target_file, 'r')
-		csvFile = csv.DictReader(fp)
-		to_savex = []
-		to_savey = []
-		for line in csvFile:
-			to_savex.append(line[0])
-			to_savey.append(line[1])
-		del to_savex[0]
-		del to_savey[0]
-		to_save = np.array(to_savex, to_savey)
-		varDict{save_name} = to_save
-		fp.close()
-	elif var_type == 'static':
-		fp = open(target_file, 'r')
-		varDict[save_name] = fp.read()
-		fp.close()
-	elif var_type == 'dynamic':
-		fp = open(target_file, 'r')
-		varDict[save_name] = fp.read()
-		fp.close()
+def import_b(var_type, save_name, target_file, csv = False):
+
+    if os.path.exists(target_file) == False:
+        print("The file +\"" + target_file + "\" does not exist.")
+    elif csv == True:
+        fp = open(target_file, 'r')
+        csvFile = csv.DictReader(fp)
+        to_savex = []
+        to_savey = []
+        for line in csvFile:
+            to_savex.append(line[0])
+            to_savey.append(line[1])
+        del to_savex[0]
+        del to_savey[0]
+        to_save = np.array(to_savex, to_savey)
+        varDict[save_name] = to_save
+        fp.close()
+    elif var_type == 'static':
+        fp = open(target_file, 'r')
+        varDict[save_name] = fp.read()
+        fp.close()
+    elif var_type == 'dynamic':
+        fp = open(target_file, 'r')
+        varDict[save_name] = fp.read()
+        fp.close()
 
 ###########################################################################################
 
@@ -801,268 +799,272 @@ def is_float(element):
 
 ### Help text:
 
-start = '''
-Hello, this is a script that runs through the various functionalities of the Optical
-Multilayer module, written by David C. Heson, Jack Liu, and Dr. Bill Robertson over the
-duration of the 2022 Middle Tennessee University Computational Sciences (R)esearch 
-(E)xperience for (U)ndergraduates, funded by the (N)ational (S)cience (F)oundation.
-This code uses the matrix formulation written by [INSERT PAPER NAME HERE] to calculate
-Fresnel coefficients of reflection/transmission, and older Fortran/MATLAB code originally
-written by Dr. Robertson to calculate the electrical field profile accross an optical multilayer.
+while True:
 
-This script provides an interactive environment to use the module's functions. Inputs such as
-the width of the layers or the indexes of refraction are input and then made into objects which
-can be easily used over and over within the code. 
-
-Familiarizing yourself with how the \"input\", \"multilayer sim\", and \"graph\" commands work is
-a good place to start.
-
-This code is designed for Python 3.x, using the Numpy and Matplotlib Python modules. All commands
-are case sensitive.
-
-At times, \"exit\" commands will return an error due to the way loop-breaking is managed in specific cases.
-The code executed properly if this happens, the messaging will be improved in later versions.
-
-For any questions, suggestions, or concerns, please reach out on the GitHub page for this project or 
-to the code maintainer, David C. Heson (email: dch376@msstate.edu).
-'''
-
-loop_start = '''
-Please input an appropiate command for the code to execute. 
-Input \"help\" for a list of commands.\n
-'''
-
-help_text = '''
-This is the list of the various commands within the script. To get more information about
-a specific command, run the command and then run help within it. (i.e., to get information about
-the \"graph\" command, input \"graph\", and then input \"help\"). To exit out of an action input
-\"exit\", which can also be used to stop the script.
-
-Basic Functionalities:
-
-- export
-- export data
-- import
-- import data
-- print
-- input
-- delete
-- resolution
-- hyperparameters
-- multilayer sim
-- efield sim
-- bloch detector
-- graph
-- graph efield
-- riu calculator
-- swt calculator
-- reset
-
-Advanced Functionalities:
-
-- multilayer sim dynamic
-- dynamic formulas
-- dynamic index
-- explore
-'''
-
-back_main = '''
-\nExiting current module, going back to main.
-'''
-
-back_sub = '''
-\nExiting current subroutine, going back to previous function.
-'''
-
-exception_gen = '''
-\nException occured! Returning to main...
-'''
-
-no_help = '''
-No additional information available for this module.
-'''
-
-invalid_command = '''
-Invalid command. Please input a valid command.
-'''
-
-print_help = '''
-Subroutine that prints out a specific variable. If you have a variable that is a list or array
-you can input \"index\" for the first command, which will then prompt you to give the 
-variable name, and the index of the element within the variable which you want to print.
-If you want to see the name of all variables currently stored, input \"all"\.
-To print the saved dynamic index formulas, input \"dynamic formulas\" at first.
-'''
-
-resolution_help = '''
-Changes the resolution at which the runs throughout the system are made. This is equivalent to
-how many points are simulated for each run over the existing interval. The lower the resolution,
-the faster the code will run (to a significant ammount), however it will also output rougher results,
-higher resolutions being required to accurately capture phenomenas such as Bloch Surface Waves.
-'''
-
-input_help = '''
-Function to create variables to be used in simulating multilayers. All inputs should be of the
-form real_part, imaginary_part, but it should be fine if only the real part is passed (assuming 0 for
-the imaginary part). For example, for inputing the index for glass, the input can be as simple
-as \"1.5\". For SiO2, the input would be \"1.46+3.4e-5\. Type in "demo" to get a premade set of parameters
-\"n_demo\" (for the index) and \"d_demo"\ (for the depths) that you can use. 
-Make sure there is no whitespace in the input!
-'''
-
-hyper_help = '''
-Function to adjust the hyperparameters used accross the various simulations of light passing
-through a multilayer. The following are the adjustable hyperparameter commands:
-- resolution
-- iterate
-- polarization
-- fixed angle
-- fixed wavelength
-- range
-- efield limit 
-- minimum required
-- exploration sens
-'''
-
-crit_ang_help = '''
-Using a critical angle initialization can allow better resolution for the area of total internal
-reflection, where Bloch Surface Waves occurs. This critical angle will be called for all Bloch
-Surface Wave related operations if \"yes"\ is input, a critical angle calculated as the arcsine of the 
-index of the bottom layer divided by the index of the top layer, everything minus 0.05 radians will be 
-used. The 0.05 radian offset is given so that there is enough "empty space" for the Bloch Surface Wave 
-detector to operate properly if a BSW is present very close to the critical angle. 
-'''
-
-iterate_help = '''
-Changes over which parameter the various functions will iterate through. Can iterate over 
-either \"wavelength\" or \"angle\".
-'''
-
-exploration_sens_help = '''
-to_do
-'''
-
-efield_help = '''
-Simulates the electric field accross the specified multilayer (using stored variables for 
-indexes and widhts). Uses the angle and wavelength hyperparameters, the simulation moving 
-from top to bottom through the multilayers, and then going outside the last layer for 
-the hyperparameter \"efield_limit\" distance. Option to graph and save the simulation. 
-The graph for the electrical field simulation will also include vertical lines that denote the 
-physical boundaries for each layer. 
-'''
-
-graph_help = '''
-Graphing subroutine that graphs any stored reflectivity or transmission simulations. 
-Provides capabilities to customize the way the graph is made, and include multiple 
-simulations on the same graph. 
-'''
-
-graph_efield_help = ''' 
-Graphing subroutine specifically for graphing stored electrical field simulations. It requires a specified 
-depths variable, since it will insert lines to denote the borders between multilayers. Provides capabilities
-to customize the way the graph is made, and include multiple simulations on the same graph. 
-'''
-
-dynamic_ind_help = '''
-Subroutine that creates an ordered list with the key list that will be dispatched for simulating an optical
-multilayer with wavelength dependent indexes of refraction.
-'''
-
-dyn_for_help = '''
-Subroutine that creates formulas for dynamic indexing. Inputs are saved to a dictionary that is automatically passed
-to the \"multilayer sim dynamic subroutine\". For input, if you wish for one of the mediums to have a static index, 
-simply input whatever static index it may be. For example, for glass the formula input would just be \"1.5\".
-For actual formulas, the input should be in the form that you'd normaly type formulas in Python code.
-Input example for TiO2 dynamic index formula (the formula assumes wavelength to be in microns):
-np.sqrt((5.913+(0.2441)/(-0.0803+(x*10**6)**2))+0.0007j
-'''
-
-bloch_help = '''
-Subroutine to analyze a given multilayer setup and determine if it exhibits a Bloch Surface Wave (without graphing it).
-While the back-end function for the Bloch Surface Wave detector is useful in other subroutines, for manually checking
-if a specific multilayer does exhibit a Bloch Surface Wave, the Electrical Field Simulator (\"efield sim\") might be 
-more useful, since it guarantees that what is observed is actually BSW and not just interference. However, \"bloch detector\" 
-does return the reflectivity minimums detected as Bloch Surface Waves, and the angle/wavelength they occur at.
-'''
-
-riu_help = '''
-Subroutine which calculates the degrees or nanometers per (R)efractive (I)ndex (U)nits, given a multilayer. It is reccomended
-to run this at a resolution as high as possible, due to the chance that the altered multilayer setup used to obtain the RIU value
-may exhibit a Bloch Surface Wave that's extremely tight. The calculation is made by changing the final layer index by 0.01, and then
-comparing the position of the BSW of the original multilayer design with that of the altered multilayer design. Will try to use the 
-critical angle functionality if it is triggered on. 
-'''
-
-swt_help = '''
-Subroutine which calculates the degrees or nanometers per (S)hift (W)ith (T)hickness, given a multilayer. It is reccomended
-to run this at a resolution as high as possible, due to the chance that the altered multilayer setup used to obtain the SWT value
-may exhibit a Bloch Surface Wave that's extremely tight. The calculation is made by changing the final layer thickness by 10 nanometers, 
-and then comparing the position of the BSW of the original multilayer design with that of the altered multilayer design. Will try to 
-use the  critical angle functionality if it is triggered on. 
-'''
-
-explore_help = '''
-Subroutine which explores multilayer setups within a given range of parameters, and calculating the minimum values observed by the BSW 
-detector function. Found results could display dips in reflectivity due to interference conditions, and not the presence of a BSW, hence 
-any obtained layers should be confirmed using the electric field graphing functions. The found layers will be stored in the variable dictionary
-as \"insertedname_#\". For example, if the run name is \"test\" and 5 multilayers are found, the stored layers will be named \"test_1\", \"test_2\", 
-\"test_3"\, "\test_4"\, and \"test_5\". If the RIU and/or the SWT filters are chosen, the code will also filter out multilayers that exhibit 
-RIU\SWT measures below the values indicated in the hyperparameters under \"sens threshold\". 
-'''
-
-export_help = '''
-Simple tool to export data or a variable created through the script for future use. It will create a .txt document that simply has the respective information.
-For exporting data as a .csv, use the \"export data\" command specifically. 
-'''
-
-import_help = '''
-Simple tool to import data or a variable. Works well with variables created within the script, and a variable could also be potentially defined outside of the
-script and then imported this way.
-For importing data from a .csv, use the \"import data\" command specfiically. 
-'''
-
-export_data_help = '''
-Subroutine of the export tool to export data specifically as .csv. The names input will be used as column headers.
-'''
-
-import_data_help = '''
-Subroutine of the import tool to import .csv data. Will follow the data format from the export_data subroutine, meaning
-that it will specifically look at all the rows below the column headers, taking the first column as the independent variable
-and the second column as the dependent variable. 
-'''
-
-input_alert = '''
-It is STRONGLY suggested to see the documentation for this command before
-using it! Type \"ok\" when asked for a variable name to disable this alert for this session.
-'''
-
-input_demo = '''
-Pre-made variables for index (\"n_demo\") and layer depths (\"d_demo\") created.
-'''
-
-input_autobuild = '''
-Do you want to use the multilayer autobuilder? It will generate either an index list or width list
-that corresponds to a regular multilayer design. Type \"exit\" to quit the loop anytime. (yes/no)\n\n
-'''
-
-polarization_int = '''
-Please insert which polarization / output you want to be used throughout the program.
-The options are:
-- \"rs\" (reflection with S-polarization)
-- \"rp\" (reflection with P-polarization)
-- \"ts\" (transmission with S-polarization)
-- \"tp\" (transmission with P-polarization)
-'''
-
-hyper_int = '''
-Please insert which hyperparameter you wish to change. Alternatively, type in \"check\" to get a 
-full list of all hyperparameters.
-'''
-
-reset_int = '''
-Do you wish to reset all the hyperparameters (\"hyper\"), all the variables (\"var\") or everything (\"all\").
-Type \"exit\" to not reset anything.
-'''
+    start = '''
+    Hello, this is a script that runs through the various functionalities of the Optical
+    Multilayer module, written by David C. Heson, Jack Liu, and Dr. Bill Robertson over the
+    duration of the 2022 Middle Tennessee University Computational Sciences (R)esearch 
+    (E)xperience for (U)ndergraduates, funded by the (N)ational (S)cience (F)oundation.
+    This code uses the matrix formulation written by [INSERT PAPER NAME HERE] to calculate
+    Fresnel coefficients of reflection/transmission, and older Fortran/MATLAB code originally
+    written by Dr. Robertson to calculate the electrical field profile accross an optical multilayer.
+    
+    This script provides an interactive environment to use the module's functions. Inputs such as
+    the width of the layers or the indexes of refraction are input and then made into objects which
+    can be easily used over and over within the code. 
+    
+    Familiarizing yourself with how the \"input\", \"multilayer sim\", and \"graph\" commands work is
+    a good place to start.
+    
+    This code is designed for Python 3.x, using the Numpy and Matplotlib Python modules. All commands
+    are case sensitive.
+    
+    At times, \"exit\" commands will return an error due to the way loop-breaking is managed in specific cases.
+    The code executed properly if this happens, the messaging will be improved in later versions.
+    
+    For any questions, suggestions, or concerns, please reach out on the GitHub page for this project or 
+    to the code maintainer, David C. Heson (email: dch376@msstate.edu).
+    '''
+    
+    loop_start = '''
+    Please input an appropiate command for the code to execute. 
+    Input \"help\" for a list of commands.\n
+    '''
+    
+    help_text = '''
+    This is the list of the various commands within the script. To get more information about
+    a specific command, run the command and then run help within it. (i.e., to get information about
+    the \"graph\" command, input \"graph\", and then input \"help\"). To exit out of an action input
+    \"exit\", which can also be used to stop the script.
+    
+    Basic Functionalities:
+    
+    - export
+    - export data
+    - import
+    - import data
+    - print
+    - input
+    - delete
+    - resolution
+    - hyperparameters
+    - multilayer sim
+    - efield sim
+    - bloch detector
+    - graph
+    - graph efield
+    - riu calculator
+    - swt calculator
+    - reset
+    
+    Advanced Functionalities:
+    
+    - multilayer sim dynamic
+    - dynamic formulas
+    - dynamic index
+    - explore
+    '''
+    
+    back_main = '''
+    \nExiting current module, going back to main.
+    '''
+    
+    back_sub = '''
+    \nExiting current subroutine, going back to previous function.
+    '''
+    
+    exception_gen = '''
+    \nException occured! Returning to main...
+    '''
+    
+    no_help = '''
+    No additional information available for this module.
+    '''
+    
+    invalid_command = '''
+    Invalid command. Please input a valid command.
+    '''
+    
+    print_help = '''
+    Subroutine that prints out a specific variable. If you have a variable that is a list or array
+    you can input \"index\" for the first command, which will then prompt you to give the 
+    variable name, and the index of the element within the variable which you want to print.
+    If you want to see the name of all variables currently stored, input \"all"\.
+    To print the saved dynamic index formulas, input \"dynamic formulas\" at first.
+    '''
+    
+    resolution_help = '''
+    Changes the resolution at which the runs throughout the system are made. This is equivalent to
+    how many points are simulated for each run over the existing interval. The lower the resolution,
+    the faster the code will run (to a significant ammount), however it will also output rougher results,
+    higher resolutions being required to accurately capture phenomenas such as Bloch Surface Waves.
+    '''
+    
+    input_help = '''
+    Function to create variables to be used in simulating multilayers. All inputs should be of the
+    form real_part, imaginary_part, but it should be fine if only the real part is passed (assuming 0 for
+    the imaginary part). For example, for inputing the index for glass, the input can be as simple
+    as \"1.5\". For SiO2, the input would be \"1.46+3.4e-5\. Type in "demo" to get a premade set of parameters
+    \"n_demo\" (for the index) and \"d_demo"\ (for the depths) that you can use. 
+    Make sure there is no whitespace in the input!
+    '''
+    
+    hyper_help = '''
+    Function to adjust the hyperparameters used accross the various simulations of light passing
+    through a multilayer. The following are the adjustable hyperparameter commands:
+    - resolution
+    - iterate
+    - polarization
+    - fixed angle
+    - fixed wavelength
+    - range
+    - efield limit 
+    - minimum required
+    - exploration sens
+    '''
+    
+    crit_ang_help = '''
+    Using a critical angle initialization can allow better resolution for the area of total internal
+    reflection, where Bloch Surface Waves occurs. This critical angle will be called for all Bloch
+    Surface Wave related operations if \"yes"\ is input, a critical angle calculated as the arcsine of the 
+    index of the bottom layer divided by the index of the top layer, everything minus 0.05 radians will be 
+    used. The 0.05 radian offset is given so that there is enough "empty space" for the Bloch Surface Wave 
+    detector to operate properly if a BSW is present very close to the critical angle. 
+    '''
+    
+    iterate_help = '''
+    Changes over which parameter the various functions will iterate through. Can iterate over 
+    either \"wavelength\" or \"angle\".
+    '''
+    
+    exploration_sens_help = '''
+    to_do
+    '''
+    
+    efield_help = '''
+    Simulates the electric field accross the specified multilayer (using stored variables for 
+    indexes and widhts). Uses the angle and wavelength hyperparameters, the simulation moving 
+    from top to bottom through the multilayers, and then going outside the last layer for 
+    the hyperparameter \"efield_limit\" distance. Option to graph and save the simulation. 
+    The graph for the electrical field simulation will also include vertical lines that denote the 
+    physical boundaries for each layer. 
+    '''
+    
+    graph_help = '''
+    Graphing subroutine that graphs any stored reflectivity or transmission simulations. 
+    Provides capabilities to customize the way the graph is made, and include multiple 
+    simulations on the same graph. 
+    '''
+    
+    graph_efield_help = ''' 
+    Graphing subroutine specifically for graphing stored electrical field simulations. It requires a specified 
+    depths variable, since it will insert lines to denote the borders between multilayers. Provides capabilities
+    to customize the way the graph is made, and include multiple simulations on the same graph. 
+    '''
+    
+    dynamic_ind_help = '''
+    Subroutine that creates an ordered list with the key list that will be dispatched for simulating an optical
+    multilayer with wavelength dependent indexes of refraction.
+    '''
+    
+    dyn_for_help = '''
+    Subroutine that creates formulas for dynamic indexing. Inputs are saved to a dictionary that is automatically passed
+    to the \"multilayer sim dynamic subroutine\". For input, if you wish for one of the mediums to have a static index, 
+    simply input whatever static index it may be. For example, for glass the formula input would just be \"1.5\".
+    For actual formulas, the input should be in the form that you'd normaly type formulas in Python code.
+    Input example for TiO2 dynamic index formula (the formula assumes wavelength to be in microns):
+    np.sqrt((5.913+(0.2441)/(-0.0803+(x*10**6)**2))+0.0007j
+    '''
+    
+    bloch_help = '''
+    Subroutine to analyze a given multilayer setup and determine if it exhibits a Bloch Surface Wave (without graphing it).
+    While the back-end function for the Bloch Surface Wave detector is useful in other subroutines, for manually checking
+    if a specific multilayer does exhibit a Bloch Surface Wave, the Electrical Field Simulator (\"efield sim\") might be 
+    more useful, since it guarantees that what is observed is actually BSW and not just interference. However, \"bloch detector\" 
+    does return the reflectivity minimums detected as Bloch Surface Waves, and the angle/wavelength they occur at.
+    '''
+    
+    riu_help = '''
+    Subroutine which calculates the degrees or nanometers per (R)efractive (I)ndex (U)nits, given a multilayer. It is reccomended
+    to run this at a resolution as high as possible, due to the chance that the altered multilayer setup used to obtain the RIU value
+    may exhibit a Bloch Surface Wave that's extremely tight. The calculation is made by changing the final layer index by 0.01, and then
+    comparing the position of the BSW of the original multilayer design with that of the altered multilayer design. Will try to use the 
+    critical angle functionality if it is triggered on. 
+    '''
+    
+    swt_help = '''
+    Subroutine which calculates the degrees or nanometers per (S)hift (W)ith (T)hickness, given a multilayer. It is reccomended
+    to run this at a resolution as high as possible, due to the chance that the altered multilayer setup used to obtain the SWT value
+    may exhibit a Bloch Surface Wave that's extremely tight. The calculation is made by changing the final layer thickness by 10 nanometers, 
+    and then comparing the position of the BSW of the original multilayer design with that of the altered multilayer design. Will try to 
+    use the  critical angle functionality if it is triggered on. 
+    '''
+    
+    explore_help = '''
+    Subroutine which explores multilayer setups within a given range of parameters, and calculating the minimum values observed by the BSW 
+    detector function. Found results could display dips in reflectivity due to interference conditions, and not the presence of a BSW, hence 
+    any obtained layers should be confirmed using the electric field graphing functions. The found layers will be stored in the variable dictionary
+    as \"insertedname_#\". For example, if the run name is \"test\" and 5 multilayers are found, the stored layers will be named \"test_1\", \"test_2\", 
+    \"test_3"\, "\test_4"\, and \"test_5\". If the RIU and/or the SWT filters are chosen, the code will also filter out multilayers that exhibit 
+    RIU\SWT measures below the values indicated in the hyperparameters under \"sens threshold\". 
+    '''
+    
+    export_help = '''
+    Simple tool to export data or a variable created through the script for future use. It will create a .txt document that simply has the respective information.
+    For exporting data as a .csv, use the \"export data\" command specifically. 
+    '''
+    
+    import_help = '''
+    Simple tool to import data or a variable. Works well with variables created within the script, and a variable could also be potentially defined outside of the
+    script and then imported this way.
+    For importing data from a .csv, use the \"import data\" command specfiically. 
+    '''
+    
+    export_data_help = '''
+    Subroutine of the export tool to export data specifically as .csv. The names input will be used as column headers.
+    '''
+    
+    import_data_help = '''
+    Subroutine of the import tool to import .csv data. Will follow the data format from the export_data subroutine, meaning
+    that it will specifically look at all the rows below the column headers, taking the first column as the independent variable
+    and the second column as the dependent variable. 
+    '''
+    
+    input_alert = '''
+    It is STRONGLY suggested to see the documentation for this command before
+    using it! Type \"ok\" when asked for a variable name to disable this alert for this session.
+    '''
+    
+    input_demo = '''
+    Pre-made variables for index (\"n_demo\") and layer depths (\"d_demo\") created.
+    '''
+    
+    input_autobuild = '''
+    Do you want to use the multilayer autobuilder? It will generate either an index list or width list
+    that corresponds to a regular multilayer design. Type \"exit\" to quit the loop anytime. (yes/no)\n\n
+    '''
+    
+    polarization_int = '''
+    Please insert which polarization / output you want to be used throughout the program.
+    The options are:
+    - \"rs\" (reflection with S-polarization)
+    - \"rp\" (reflection with P-polarization)
+    - \"ts\" (transmission with S-polarization)
+    - \"tp\" (transmission with P-polarization)
+    '''
+    
+    hyper_int = '''
+    Please insert which hyperparameter you wish to change. Alternatively, type in \"check\" to get a 
+    full list of all hyperparameters.
+    '''
+    
+    reset_int = '''
+    Do you wish to reset all the hyperparameters (\"hyper\"), all the variables (\"var\") or everything (\"all\").
+    Type \"exit\" to not reset anything.
+    '''
+    
+    break
 
 ### Variable set-up:
 
@@ -1136,143 +1138,159 @@ while True:
     ##########################
     
     elif command == 'export':
-		try:
-			while True:
-				varName = input("Please specify the name of the variable/data which you wish to export.\n\n")
-				if varName == 'exit':
-					print(back_main)
-					break
-				elif varName == 'help':
-					print(export_help)
-					continue
-				varType = input("Is the variable to be saved a generated dynamic formula? (yes/no)\n\n")
-				if varType == 'exit':
-					print(back_main)
-					break
-				elif varName == 'help':
-					print(export_help)
-					continue
-				if varType == 'yes':
-					varType == 'dynamic'
-					if varName in dynamic_formulas == False:
-						print("Variable " + varName + " not found in the dynamic variable dictionary.")
-						print(back_main)
-						break
-				elif varType == 'no':
-					varType == 'static'
-					if varName in varDict == False:
-						print("Variable " + varName + " not found in the variable dictionary.")
-						print(back_main)
-						break
-				print("Please specify the name of the file where you want to save this.")
-				file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name of the variable.\n\n")
-				if file_save == " ":
-					export(var_type = varType, target_var = varName, target_file = varName)
-				else:
-					export(var_type = varType, target_var = varName, target_file = file_save)
-				print("\"" + varName + "\" succesfully exported!")
-				print(back_sub)	
-		else:
-			print(exception_gen)
-
+        try:
+            while True:
+                varName = input("Please specify the name of the variable/data which you wish to export.\n\n")
+                if varName == 'exit':
+                    print(back_main)
+                    break
+                elif varName == 'help':
+                    print(export_help)
+                    continue
+                varType = input("Is the variable to be saved a generated dynamic formula? (yes/no)\n\n")
+                if varType == 'exit':
+                    print(back_main)
+                    break
+                elif varName == 'help':
+                    print(export_help)
+                    continue
+                if varType == 'yes':
+                    varType == 'dynamic'
+                    if varName in dynamic_formulas == False:
+                        print("Variable " + varName + " not found in the dynamic variable dictionary.")
+                        print(back_main)
+                        break
+                elif varType == 'no':
+                    varType == 'static'
+                    if varName in varDict == False:
+                        print("Variable " + varName + " not found in the variable dictionary.")
+                        print(back_main)
+                        break
+                print("Please specify the name of the file where you want to save this.")
+                file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name of the variable.\n\n")
+                if file_save == " ":
+                    export(var_type = varType, target_var = varName, target_file = varName)
+                else:
+                    export(var_type = varType, target_var = varName, target_file = file_save)
+                print("\"" + varName + "\" succesfully exported!")
+                print(back_sub)	
+        except:
+            print(exception_gen)
+    
     ##########################  
-
-	elif command == 'export data':
-		try:
-			while True:
-				varName = input("Please input the name of the variable under which the data you wish to save is stored.\n\n")
-				if varName == 'exit':
-					print(back_main)
-					break
-				elif varName == 'help':
-					print(export_data_help)
-					continue
-				elif varName not in varDict:
-					print(str(to_graph), " not found in stored in variables.")
-					continue
-				print("Please specify the name of the file where you want to save this.")
-				file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name the data is saved under.\n\n")
-				if file_save == " ":
-					export(var_type = varType, target_var = varName, target_file = varName)
-				else:
-					export(var_type = varType, target_var = varName, target_file = file_save)
-				print("\"" + varName + "\" succesfully exported!")
-				print(back_sub)	
-		except:
-			print(exception_gen)
-
+    
+    elif command == 'export data':
+        try:
+            while True:
+                varName = input("Please input the name of the variable under which the data you wish to save is stored.\n\n")
+                if varName == 'exit':
+                    print(back_main)
+                    break
+                elif varName == 'help':
+                    print(export_data_help)
+                    continue
+                elif varName not in varDict:
+                    print(str(to_graph), " not found in stored in variables.")
+                    continue
+                print("Please specify the name of the file where you want to save this.")
+                file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name the data is saved under.\n\n")
+                if file_save == " ":
+                    file_save = varName + '.csv'
+                    export(var_type = varType, target_var = varName, target_file = file_save)
+                else:
+                    export(var_type = varType, target_var = varName, target_file = file_save)
+                print("\"" + varName + "\" succesfully exported!")
+                print(back_sub)	
+        except:
+            print(exception_gen)
+            
     ##########################
 
-	elif command == 'import data':
-	try:
-		while True:
-			print(1)
-	except:
-		print(exception_gen)
+    elif command == 'import data':
+        try:
+            while True:
+                varType = 1
+                varName = input("Please input the name under which you want to save the imported data.\n\n")
+                if varName == 'exit':
+                    print(back_main)
+                    break
+                elif varName == 'help':
+                    print(import_data_help)
+                    continue
+                elif varName not in varDict:
+                    print(str(to_graph), " not found in stored in variables.")
+                    continue
+                print("Please specify the name of the file where you want to save this.")
+                file_save = input("Alternatively, input \" \" to save it to the folder where this script is in with the name the data is saved under.\n\n")
+                if file_save == " ":
+                    import_b(var_type = varType, target_var = varName, target_file = varName)
+                else:
+                    import_b(var_type = varType, target_var = varName, target_file = file_save)
+                print("\"" + varName + "\" succesfully exported!")
+                print(back_sub)	
+        except:
+            print(exception_gen)
     
     ##########################
     
     elif command == 'import':
-		try:
-			while True:
-				varName = input("Please specify the name you want to import the variable/data as.\n\n")
-				if varName == 'exit':
-					print(back_main)
-					break
-				elif varName == 'help':
-					print(import_help)
-					continue
-				varType = input("Is the variable/data you are importing a dynamic formula? (yes/no)\n\n")
-				if varType == 'exit':
-					print(back_main)
-					break
-				elif varType == 'help':
-					print(import_help)
-					continue
-				elif varType == 'yes':
-					varType = 'dynamic'
-				elif varType == 'no':
-					varType = 'static'
-				print("Please specify the name of the file from where the data is being imported.")
-				varFile = input("Alternatively, input \" \" if it is saved with the name you indicated and it is in the same folder as this script.\n\n")
-				if varFile = " ":
-					import_b(varType, varName, varName)
-				else:
-					import_b(varType, varName, varFile)
-				print("\"" + varName + "\" succesfully imported!")
-				print(back_sub)
-		except:
-			print(exception_gen)
-
+        try:
+            while True:
+                varName = input("Please specify the name you want to import the variable/data as.\n\n")
+                if varName == 'exit':
+                    print(back_main)
+                    break
+                elif varName == 'help':
+                    print(import_help)
+                    continue
+                varType = input("Is the variable/data you are importing a dynamic formula? (yes/no)\n\n")
+                if varType == 'exit':
+                    print(back_main)
+                    break
+                elif varType == 'help':
+                    print(import_help)
+                    continue
+                elif varType == 'yes':
+                    varType = 'dynamic'
+                elif varType == 'no':
+                    varType = 'static'
+                print("Please specify the name of the file from where the data is being imported.")
+                varFile = input("Alternatively, input \" \" if it is saved with the name you indicated and it is in the same folder as this script.\n\n")
+                if varFile == " ":
+                    import_b(varType, varName, varName)
+                else:
+                    import_b(varType, varName, varFile)
+                print("\"" + varName + "\" succesfully imported!")
+                print(back_sub)
+        except:
+            print(exception_gen)
+    
     ##########################
     
-    elif command == 'export data':
-		try:
-			while True:
-				varName = input("Please input the name under which the data you wish to export is saved.\n\n")
-				if varName == "exit":
-					print(back_main)
-					break
-				elif varName == "help":
-					print(export_data_help)
-					continue
-				elif varName not in varDict:
-					print("Data \"" + varName + \" not found in stored variables.")
-					continue
-				print()
-				
-		except:
-			print(exception_gen)
-
-	##########################
-    
     elif command == 'import data':
-		try:
-			while True:
-		except:
-			print(exception_gen)
-	
-	##########################
+        try:
+            while True:
+                varType = 1
+                varName = input("Please specify the name you want to import the variable/data as.\n\n")
+                if varName == 'exit':
+                    print(back_main)
+                    break
+                elif varName == 'help':
+                    print(import_help)
+                    continue
+                print("Please specify the name of the file from where the data is being imported.")
+                varFile = input("Alternatively, input \" \" if it is saved with the name you indicated and it is in the same folder as this script.\n\n")
+                if varFile == " ":
+                    varFile = varName + '.csv'
+                    import_b(varType, varName, varFile, csv = True)
+                else:
+                    import_b(varType, varName, varFile, csv = True)
+                print("\"" + varName + "\" succesfully imported!")
+                print(back_sub)				
+        except:
+            print(exception_gen)
+    
+    ##########################
     
     elif command == 'print':
         try:
